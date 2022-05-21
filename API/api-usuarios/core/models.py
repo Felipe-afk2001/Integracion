@@ -5,9 +5,10 @@ from django.contrib.auth.models import User
 class Usuario(models.Model):
   usuario = models.OneToOneField(User, on_delete=models.CASCADE)
   run = models.CharField(max_length=10, primary_key=True)
+  tipo_usuario =models.CharField(max_length=1)
 
   def __str__(self):
-    return f"{self.usuario.first_name} {self.usuario.last_name}"
+    return f"{self.usuario.username}"
 
 
   

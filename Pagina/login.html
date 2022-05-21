@@ -57,14 +57,41 @@
              throw data;
            }  
             sessionStorage.setItem("accessToken", data.access);
-            window.location.replace("./prescripcion.html");
-
+            await obtenerdatos();
            console.log(data);
           
             
         } catch(error) {
         	alert(error.detail);
         }
+    }
+    async function obtenerdatos(){
+        try {
+        	const response = await fetch("http://127.0.0.1:8002/info/", {
+            	method: "GET",
+              headers:{
+                'Content-Type':'application/json',
+                'Authentication': 'Bearer '+sessionStorage.getItem('accessToken')
+              },
+            });
+            const  data  = await response.json();
+
+            if (!response.ok){
+             throw data;
+           }  
+          
+            if (data.tipo_usuario==='M'){
+              window.location.replace("./prescripcion.html");
+            }else{
+              window.location.replace("./medicamentos.html");
+            }
+           console.log(data);
+          
+            
+        } catch(error) {
+        	alert(error.detail);
+        }
+ 
     }
     loginForm.addEventListener("submit", function(event) {
       event.preventDefault();

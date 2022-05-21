@@ -13,7 +13,8 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
 class UserInfoView(APIView):
   def get(self,request,format=None):
-    usuario=request.user
-    return Response(usuario, status=status.HTTP_200_OK)
+    usuario=Usuario.objects.get(usuario=request.user)
+    userserializer=UsuarioSerializer(usuario)
+    return Response(userserializer.data, status=status.HTTP_200_OK)
 
 
