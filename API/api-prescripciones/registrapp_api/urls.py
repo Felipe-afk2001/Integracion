@@ -24,6 +24,6 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('rest_framework.urls', namespace='rest_framework')),
-    path('prescripcion/', prescripcionViewSet.as_view({'get': 'list'}), name="user_info"),
+    path('prescripcion/', prescripcionViewSet.as_view({'get': 'list', 'post':'create'}), name="user_info"),
     path('', include(router.urls)),
 ]

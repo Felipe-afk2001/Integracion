@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>W3.CSS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    body {
+      background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.pinimg.com/originals/a7/fc/aa/a7fcaa43650adc892c401956a08dc32a.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="w3-blue w3-center w3-padding-16 w3-round-large w3-margin">
+    Hola Medico
+  </header>
+  <div class="w3-margin w3-display-middle">
+    <button type="submit" class="w3-blue w3-btn w3-round-large" onclick="alternarModal('abrir')">Crear
+      prescripción</button>
+  </div>
+  <form id="prescripcion" class="w3-modal">
+    <div class="w3-modal-content">
+      <div class="w3-container" style="padding-left: 0;">
+        <header class="w3-blue w3-padding">
+          .....
+          <button type="button" onclick="alternarModal('cerrar')" class="w3-button w3-display-topright">
+            &times;
+          </button>
+        </header>
+        <div class="w3-padding">
+          <label for="nd">Nombre Dostor</label>
+          <input id="nd" type="text" class="w3-input" />
+        </div>
+        <div class="w3-row-padding">
+          <div class="w3-half">
+            <label for="np">Nombre Paciente</label>
+            <input id="np" type="text" class="w3-input" />
+          </div>
+          <div class="w3-half">
+            <label for="run">RUN</label>
+            <input id="run" type="text" maxlength="10" class="w3-input" />
+          </div>
+        </div>
+        <div class="w3-padding">
+          <label for="pres">Prescripción</label>
+          <textarea id="pres" class="w3-input" style="resize: none"></textarea>
+        </div>
+        <button type="submit" class="w3-button w3-blue w3-margin">
+          Inscribir
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    const $ = element => document.querySelector(element);
+    const prescripcionForm = $("#prescripcion");
+
+    function alternarModal(accion) {
+      prescripcionForm.style.display = accion === "abrir" ? "block" : "none";
+    }
+
+    function camposVacios({ nom_doc, nom_pac, rut_pac, receta }) {
+      return !nom_doc || !nom_pac || !rut_pac || !receta;
+    }
+
+    async function crearPrescripcion(datos) {
+      console.log(datos);
+      try {
+        const response = await fetch("http://127.0.0.1:8001/prescripcion/", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(datos),
+        });
+        const data = await response.json();
+
+        if (!response.status === 201) {
+          throw data;
+        }
+
+        //alternarModal("cerrar");
+        alert('se ingreso con exito la prescripcion');
+        //prescripcionForm.reset();
+
+       // console.log(data);
+
+      } catch (error) {
+        alert(error.detail);
+      }
+    }
+
+    prescripcionForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const nombreDoctor = $("#nd").value;
+      const nombrePaciente = $("#np").value;
+      const runPaciente = $("#run").value;
+      const prescripcion = $("#pres").value;
+
+      const datos = {
+        nom_doc: nombreDoctor,
+        nom_pac: nombrePaciente,
+        rut_pac: runPaciente,
+        receta: prescripcion
+      };
+
+      if (camposVacios(datos)) {
+        alert("Rellene los campos");
+        return
+      }
+
+
+      crearPrescripcion(datos);
+    });
+
+  </script>
+</body>
+
+</html>

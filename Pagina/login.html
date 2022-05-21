@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>W3.CSS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  	body {
+        display: flex;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: center;
+    }
+    .w3-card {
+    	overflow: hidden;
+        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="w3-card w3-round">
+    <header class="w3-blue w3-padding-16 w3-center">Iniciar Sesión</header>
+    <form class="w3-padding-large w3-white" id="loginForm">
+    	<label for="username">Correo</label>
+    	<input id="username" class="w3-input w3-margin-bottom" type="text" />
+        
+        <label for="password">Contraseña</label>
+        <input id="password" class="w3-input w3-margin-bottom" type="password" />
+        
+        <button type="submit" class="w3-button w3-blue w3-round">Iniciar sesión</button>
+    </form>
+  </div>
+  
+  <script>
+  	const $ = element => document.querySelector(element);
+    const loginForm = $("#loginForm");
+    function camposVacios ({username, password}) {
+        return !username || !password;
+    }
+    async function iniciarSesion(username, password) {
+    	const credenciales = {
+        	username,
+            password,
+        };
+
+        try {
+        	const response = await fetch("http://127.0.0.1:8000/api/token/", {
+            	method: "POST",
+              headers:{
+                'Content-Type':'application/json'
+              },
+            	body: JSON.stringify(credenciales)
+            });
+            const  data  = await response.json();
+
+            if (!response.ok){
+             throw data;
+           }  
+            sessionStorage.setItem("accessToken", data.access);
+            window.location.replace("./prescripcion.html");
+
+           console.log(data);
+          
+            
+        } catch(error) {
+        	alert(error.detail);
+        }
+    }
+    loginForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+      const username=$('#username').value;
+      const password=$('#password').value;
+      if (camposVacios({username, password})) {
+      	alert("Rellene los campos");
+        return
+      }
+      iniciarSesion(username , password);
+
+    });
+  </script>
+  
+</body>
+</html> 
