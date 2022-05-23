@@ -21,7 +21,7 @@
     Hola Medico
   </header>
   <div class="w3-margin w3-display-middle">
-    <button type="submit" class="w3-blue w3-btn w3-round-large" onclick="alternarModal('abrir')">Crear
+    <button type="submit" class="w3-blue w3-btn w3-round-large" onclick="alternarModal()">Crear
       prescripción</button>
   </div>
   <form id="prescripcion" class="w3-modal">
@@ -29,12 +29,12 @@
       <div class="w3-container" style="padding-left: 0;">
         <header class="w3-blue w3-padding">
           .....
-          <button type="button" onclick="alternarModal('cerrar')" class="w3-button w3-display-topright">
+          <button type="button" onclick="alternarModal()" class="w3-button w3-display-topright">
             &times;
           </button>
         </header>
         <div class="w3-padding">
-          <label for="nd">Nombre Dostor</label>
+          <label for="nd">Nombre Doctor</label>
           <input id="nd" type="text" class="w3-input" />
         </div>
         <div class="w3-row-padding">
@@ -62,8 +62,9 @@
     const $ = element => document.querySelector(element);
     const prescripcionForm = $("#prescripcion");
 
-    function alternarModal(accion) {
-      prescripcionForm.style.display = accion === "abrir" ? "block" : "none";
+    function alternarModal() {
+      const style=prescripcionForm.style;
+      style.display = style.display === "none" ? "block" : "none";
     }
 
     function camposVacios({ nom_doc, nom_pac, rut_pac, receta }) {

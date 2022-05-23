@@ -6,6 +6,10 @@
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <style>
   	body {
+      background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.pinimg.com/originals/5a/b8/1c/5ab81ceb81071ae6b4d5da95228c4b3e.gif');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
         display: flex;
         min-height: 100vh;
         align-items: center;
@@ -67,11 +71,11 @@
     }
     async function obtenerdatos(){
         try {
-        	const response = await fetch("http://127.0.0.1:8002/info/", {
+        	const response = await fetch("http://127.0.0.1:8000/info/", {
             	method: "GET",
               headers:{
                 'Content-Type':'application/json',
-                'Authentication': 'Bearer '+sessionStorage.getItem('accessToken')
+                'Authorization': 'Bearer '+sessionStorage.getItem('accessToken')
               },
             });
             const  data  = await response.json();

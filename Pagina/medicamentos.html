@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>W3.CSS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    body {
+      background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.pinimg.com/originals/a7/fc/aa/a7fcaa43650adc892c401956a08dc32a.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="w3-blue w3-center w3-padding-16 w3-round-large w3-margin">
+    Hola Farmaceutico
+  </header>
+  
+  <div class="w3-margin w3-display-middle"id="principal">
+    <form onsubmit="buscarPrescripcion(event)" >  <label for="rut"class="w3-text-white">Ingrese rut para buscar prescripcion</label>
+        <input id="rut" required minlength="9" type="text"class="w3-input">
+      <button type="submit" class="w3-blue w3-btn w3-round-large w3-margin-top" >Buscar
+        prescripción</button></form>
+    <div class="w3-white w3-padding w3-round-large w3-margin-top" id="Datos" style="display:none" ></div>
+  </div>
+
+
+  <script>
+    const $ = element => document.querySelector(element);
+ 
+    async function buscarPrescripcion(e) {
+        e.preventDefault()
+      const rut=$("#rut").value;
+      try {
+        const response = await fetch(`http://127.0.0.1:8001/prescripcion/${rut}`, {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json();
+
+        if (!response.status === 201) {
+          throw data;
+        }
+
+        //alternarModal("cerrar");
+        mostrarDatos(data[0])
+        //prescripcionForm.reset();
+
+       // console.log(data);
+
+      } catch (error) {
+        alert(error.detail||error.message);
+      }
+    }
+    function mostrarDatos(datos){
+        const contenedorDatos =$("#Datos");
+        const principal=$("#principal");
+        if (contenedorDatos.innerHTML)contenedorDatos.innerHTML="";
+        contenedorDatos.innerHTML = `
+        <p><b>Nombre Doctor:</b> ${datos.nom_doc}</p>
+        <p><b>Nombre Paciente:</b> ${datos.nom_pac}</p>
+        <p><b>Rut Paciente:</b> ${datos.rut_pac}</p>
+        <p><b>Prescripcion:</b> ${datos.receta}</p>
+        `;
+    contenedorDatos.style.display="block"
+    }
+
+  </script>
+</body>
+
+</html>

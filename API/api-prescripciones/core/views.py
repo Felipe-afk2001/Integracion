@@ -11,6 +11,12 @@ class prescripcionViewSet(viewsets.ModelViewSet):
   queryset = prescripcion.objects.all()
   serializer_class = prescripcionSerializer
 
+class prescripcionDetalle(APIView):
+  def get(self, request,rut):
+    detalle = prescripcion.objects.filter(rut_pac=rut).order_by("-id_presc")
+    serializer = prescripcionSerializer(detalle,many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
 
 
 
