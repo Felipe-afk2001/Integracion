@@ -18,12 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from core import views
-from core.views import medicamnetoViewSet
+from core.views import medicamnetoViewSet , medicamentoDetalle
 
 router = routers.DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('rest_framework.urls', namespace='rest_framework')),
-    path('medicamento/', medicamnetoViewSet.as_view({'get': 'list'}), name="user_info"),
+    path('medicamento/', medicamnetoViewSet.as_view({'get': 'list'}), name="medicamento"),
+    path('medicamento/<int:id>/',medicamentoDetalle.as_view(),  name="medicamento_info"),
     path('', include(router.urls)),
 ]

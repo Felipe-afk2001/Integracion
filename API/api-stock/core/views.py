@@ -11,6 +11,12 @@ class medicamnetoViewSet(viewsets.ModelViewSet):
   queryset = medicamento.objects.all()
   serializer_class = medicamentoSerializer
 
+class medicamentoDetalle(APIView):
+  def get(self, request,id):
+    detalle = medicamento.objects.filter(id_stock=id).order_by("-id_stock")
+    serializer = medicamentoSerializer(detalle,many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
 
 
 
