@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Modificar</title>
+</head>
+
+<body>
+    <form onsubmit="actualizar(event)" class="w3-card w3-padding w3-display-middle w3-light-blue w3-round-large">
+        <label for="Nombre">Nombre:</label>
+        <input id="Nombre" type="text" class="w3-input">
+        <label for="Descripcion">Descripcion:</label>
+        <input id="Descripcion" type="text" class="w3-input">
+        <label for="Cantidad">Cantidad:</label>
+        <input id="Cantidad" type="number" class="w3-input">
+        <label for="Laboratorio">Laboratorio:</label>
+        <input id="Laboratorio" type="text" class="w3-input">
+        <button class="w3-button w3-blue w3-round-large w3-margin-top">Confirmar</button>
+    </form>
+    <script>
+        const $ = element => document.querySelector(element);
+        const { id } = getParams();
+            const nombre = $("#Nombre");
+            const desc = $("#Descripcion");
+            const cant = $("#Cantidad");
+            const lab = $("#Laboratorio");
+
+        function getParams() {
+            const search = window.location.search.replace("?", "").split("&");
+            const params = {};
+            search.forEach(param => {
+                const [key, value] = param.split("=");
+                params[key] = value;
+            });
+            return params;
+        }
+        async function obtenerDatos() {
+         
+            try {
+                const response = await fetch(`http://127.0.0.1:8002/medicamento/?id_stock=${id}`, {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+                const data = await response.json();
+
+                if (response.status !== 200) {
+                    throw data;
+                }
+
+                nombre.value = data.results[0].nom_drug;
+                desc.value = data.results[0].descripcion;
+                cant.value = data.results[0].max_cant;
+                lab.value = data.results[0].laboratorio;
+
+            } catch (error) {
+                alert(error.detail || error.message);
+            }
+        }
+        async function actualizar(e){
+            e.preventDefault();
+            const datos={
+                nom_drug:nombre.value,
+                descripcion:desc.value,
+                max_cant:cant.value,
+                laboratorio:lab.value,
+            }
+            try {
+                const response = await fetch(`http://127.0.0.1:8002/medicamento/${id}/`, {
+                    method: "PATCH",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify(datos)
+                });
+                const data = await response.json();
+
+                if (response.status !== 201) {
+                    throw data;
+                }
+                alert("Se ha actualizado con exito el medicamento :D")
+                window.location.replace("./medicamentos.html")
+            } catch (error) {
+                console.log(error)
+                alert(error.detail || error.message);
+            }
+            
+        }
+        obtenerDatos()
+
+    </script>
+</body>
+
+</html>

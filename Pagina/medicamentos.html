@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>W3.CSS</title>
+  <title>Farmaceutico</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <style>
@@ -21,25 +21,44 @@
     Bienvenido Farmaceutico
   </header>
 
-  <div class="w3-margin w3-display-left" id="principal">
-    <form onsubmit="buscarPrescripcion(event)"> <label for="rut" class="w3-text-white">Ingrese rut para buscar
-        prescripcion</label>
-      <input id="rut" required minlength="9" type="text" class="w3-input">
-      <button type="submit" class="w3-blue w3-btn w3-round-large w3-margin-top">Buscar
-        prescripción</button>
-    </form>
-    <div class="w3-white w3-padding w3-round-large w3-margin-top" id="Datos" style="display:none"></div>
-  </div>
+  <main class="w3-display-middle">
+    <div class="w3-margin w3-display-right" id="principal">
+      <form onsubmit="buscarPrescripcion(event)"> <label for="rut" class="w3-text-white">Ingrese rut:</label>
+        <input id="rut" required minlength="9" type="text" class="w3-input">
+        <button type="submit" class="w3-blue w3-btn w3-round-large w3-margin-top">Buscar
+          prescripción</button>
+      </form>
+    </div>
 
 
-  <div class="w3-margin w3-display-right" id="medicamento">
-    <form onsubmit="buscarStock(event)"> <label for="id_stock" class="w3-text-white">Ingrese el id para buscar el
-        medicamento</label>
-      <input id="id_stock" type="text" class="w3-input">
-      <button type="submit" class="w3-blue w3-btn w3-round-large w3-margin-top">Buscar
-        medicamento</button>
-    </form>
-    <div class="w3-white w3-padding w3-round-large w3-margin-top" id="Datos-med" style="display:none"></div>
+    <div class="w3-margin w3-display-left" id="medicamento">
+      <form onsubmit="buscarStock(event)"> <label for="id_stock" class="w3-text-white">Ingrese id o nombre:</label>
+        <input id="id_stock" type="text" class="w3-input">
+        <button type="submit" class="w3-blue w3-btn w3-round-large w3-margin-top">Buscar
+          medicamento</button>
+      </form>
+      <div class="w3-margin">
+
+        <button type="button" onclick="abrirMedicamentos()" class="w3-blue w3-btn w3-round-large w3-margin-top">
+          Modificar medicamentos</button>
+
+      </div>
+    </div>
+  </main>
+  <div class="w3-modal " id="modal">
+    <div class="w3-modal-content w3-round-large" style="overflow:hidden;width: fit-content;">
+      <div class="w3-container" style="padding-left: 0;">
+        <header class="w3-blue w3-padding">
+          .....
+          <button type="button" onclick="alternarModal()" class="w3-button w3-display-topright">
+            &times;
+          </button>
+        </header>
+        <div id="cont" class="w3-padding">
+
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -57,37 +76,48 @@
         });
         const data = await response.json();
 
-        if (!response.status === 201) {
+        if (response.status !== 200) {
           throw data;
         }
 
-        //alternarModal("cerrar");
-        mostrarDatos(data[0])
-        //prescripcionForm.reset();
 
+        mostrarDatos(data[0])
+        alternarModal();
         // console.log(data);
 
       } catch (error) {
-        alert(error.detail || error.message);
+        alert("El rut ingresado no tiene prescripciones asociadas");
       }
-      function mostrarDatos(datos) {
-        const contenedorDatos = $("#Datos");
-        const principal = $("#principal");
-        if (contenedorDatos.innerHTML) contenedorDatos.innerHTML = "";
-        contenedorDatos.innerHTML = `
+
+    }
+    function mostrarDatos(datos) {
+      const contenedorDatos = $("#cont");
+      if (contenedorDatos.innerHTML) contenedorDatos.innerHTML = "";
+      contenedorDatos.innerHTML = `
         <p><b>Nombre Doctor:</b> ${datos.nom_doc}</p>
         <p><b>Nombre Paciente:</b> ${datos.nom_pac}</p>
         <p><b>Rut Paciente:</b> ${datos.rut_pac}</p>
         <p><b>Prescripcion:</b> ${datos.receta}</p>
         `;
-        contenedorDatos.style.display = "block"
-      }
+      contenedorDatos.style.display = "block"
+    }
+    function mostrarDatos2(datos) {
+      const contenedorDatos = $("#cont");
+      if (contenedorDatos.innerHTML) contenedorDatos.innerHTML = "";
+      contenedorDatos.innerHTML = `
+        <p><b>Nombre Medicamento:</b> ${datos.nom_drug}</p>
+        <p><b>Descripcion:</b> ${datos.descripcion}</p>
+        <p><b>Cantidad disponible:</b> ${datos.max_cant}</p>
+        <p><b>Laboratorio:</b> ${datos.laboratorio}</p>
+        `;
+      contenedorDatos.style.display = "block"
     }
     async function buscarStock(e) {
       e.preventDefault()
-      const id = $("#id_stock").value;
+      const valor = $("#id_stock").value;
+      const parametro = parseInt(valor) ? "id_stock" : "nom_drug";
       try {
-        const response = await fetch(`http://127.0.0.1:8002/medicamento/${id}`, {
+        const response = await fetch(`http://127.0.0.1:8002/medicamento/?${parametro}=${valor}`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json'
@@ -99,27 +129,90 @@
           throw data;
         }
 
-        //alternarModal("cerrar");
-        mostrarDatos2(data[0])
-        //prescripcionForm.reset();
+        mostrarDatos2(data.results[0])
+        alternarModal();
+
+
+
+        // console.log(data);
+
+      } catch (error) {
+        alert("No se hay existencias del medicamento buscado");
+      }
+    }
+    function alternarModal() {
+      const style = $("#modal").style;
+      console.log(style)
+      style.display = style.display === "none" ? "block" : "none";
+    }
+    async function abrirMedicamentos() {
+      const contenedorDatos = $("#cont");
+      try {
+        const response = await fetch(`http://127.0.0.1:8002/medicamento/`, {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json();
+
+        if (!response.status === 201) {
+          throw data;
+        }
+
+        contenedorDatos.innerHTML = `
+        <table class="w3-table w3-striped w3-padding">
+        <tr>
+        <th>Nombre Medicamento</th>
+        <th>Laboratorio</th>
+        <th>Descripcion</th>
+        <th>Cantidad</th>
+        <th>Acciones</th>
+        </tr>
+        ${data.results.map(medicamento =>
+          `<tr>
+            <td>${medicamento.nom_drug}</td>
+            <td>${medicamento.laboratorio}</td>
+            <td>${medicamento.descripcion}</td>
+            <td>${medicamento.max_cant}</td>
+            <td>
+              <a href="./mod.html?id=${medicamento.id_stock}" class="w3-btn w3-blue w3-round-large">Modificar</a>
+              <button onclick="borrar(${medicamento.id_stock})"class="w3-btn w3-red w3-round-large">Borrar</button>
+            </td>
+            </tr>`
+        )}
+        </table>  
+        `
+        alternarModal();
+
+
 
         // console.log(data);
 
       } catch (error) {
         alert(error.detail || error.message);
       }
-      function mostrarDatos2(datos) {
-        const contenedorDatos = $("#Datos-med");
-        const principal = $("#medicamento");
-        if (contenedorDatos.innerHTML) contenedorDatos.innerHTML = "";
-        contenedorDatos.innerHTML = `
-        <p><b>Nombre Medicamento:</b> ${datos.nom_drug}</p>
-        <p><b>Descripcion:</b> ${datos.descripcion}</p>
-        <p><b>Cantidad:</b> ${datos.max_cant}</p>
-        <p><b>Laboratorio:</b> ${datos.laboratorio}</p>
-        `;
-        contenedorDatos.style.display = "block"
+    }
+    async function borrar(id){
+      try {
+        const response = await fetch(`http://127.0.0.1:8002/medicamento/${id}/`, {
+          method: "DELETE",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await response.json();
+
+        if (response.status !== 204) {
+          throw data;
+        }
+        // console.log(data);
+        alert("Se ha borrado el medicamento con exito");
+        alternarModal();
+      } catch (error) {
+        alert("Ha ocurrido un errrrrrrrrror al borrar el medicamento");
       }
+
     }
   </script>
 </body>
