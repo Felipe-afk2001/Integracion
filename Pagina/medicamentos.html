@@ -37,15 +37,18 @@
         <button type="submit" class="w3-blue w3-btn w3-round-large w3-margin-top">Buscar
           medicamento</button>
       </form>
-      <div class="w3-margin">
+      <div class="">
 
         <button type="button" onclick="abrirMedicamentos()" class="w3-blue w3-btn w3-round-large w3-margin-top">
           Modificar medicamentos</button>
 
+        <a href="crea.html" class="w3-blue w3-btn w3-round-large w3-margin-top">
+          Añadir medicamentos</a>
+
       </div>
     </div>
   </main>
-  <div class="w3-modal " id="modal">
+  <div class="w3-modal " id="modal" style="display:none">
     <div class="w3-modal-content w3-round-large" style="overflow:hidden;width: fit-content;">
       <div class="w3-container" style="padding-left: 0;">
         <header class="w3-blue w3-padding">
@@ -193,23 +196,23 @@
         alert(error.detail || error.message);
       }
     }
-    async function borrar(id){
+    async function borrar(id) {
       try {
         const response = await fetch(`http://127.0.0.1:8002/medicamento/${id}/`, {
           method: "DELETE",
           headers: {
             'Content-Type': 'application/json'
           },
-        });
-        const data = await response.json();
-
-        if (response.status !== 204) {
+        }); 
+        if (!response.ok) {
+          const data = await response.json();
           throw data;
         }
         // console.log(data);
         alert("Se ha borrado el medicamento con exito");
         alternarModal();
       } catch (error) {
+        console.log(error)
         alert("Ha ocurrido un errrrrrrrrror al borrar el medicamento");
       }
 

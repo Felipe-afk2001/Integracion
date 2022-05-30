@@ -22,6 +22,12 @@ class medicamentoDetalle(generics.ListAPIView):
     if nom is not None:
       queryset=queryset.filter(nom_drug=nom)
     return queryset
+  def post(self, request, *args, **kwargs):
+    serializer=self.serializer_class(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 class actualizarMedicamento(APIView):
   def get_object(self, id):
     return medicamento.objects.get(id_stock=id)
