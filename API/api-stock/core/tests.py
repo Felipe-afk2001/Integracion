@@ -1,6 +1,5 @@
 # Django
 from django.test import TestCase
-
 # Python
 import json
 
@@ -72,7 +71,7 @@ class medicamentoTestCase(TestCase):
             format='json'
         )
 
-        # result = json.loads(response.content)
+        result = json.loads(response.content)
         # self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # if 'id_stock' in result:
@@ -117,19 +116,20 @@ class medicamentoTestCase(TestCase):
         
 
         response = client.get(
-            f'/medicamento/{med.id_stock}/'
+            f'/medicamento/',{'id_stock':med.id_stock}
             )
         
         result = json.loads(response.content)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        # self.assertEqual(result['count'], 2)
-
-        
-        self.assertIn('id_stock', med)
-        self.assertIn('nom_drug', result)
-        self.assertIn('descripcion', result)
-        self.assertIn('max_cant', result)
-        self.assertIn('laboratorio', result)
+        self.assertEqual(result['count'], 1)
+        for med in result['results']:
+            self.assertIn('id_stock', med)
+            self.assertIn('nom_drug', med)
+            self.assertIn('descripcion', med)
+            self.assertIn('max_cant', med)
+            self.assertIn('laboratorio', med)
+            
+            break
             
             
